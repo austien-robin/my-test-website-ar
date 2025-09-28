@@ -9,3 +9,6 @@
    <h1>Hello World, this is my first web page.</h1>
 </body>
 </html>
+git add -A
+git commit -m "Initial commit"
+git push origin master
