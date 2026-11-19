@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Student Entry Table (SET)</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+    }
+    th, td {
+      border: 1px solid #ccc;
+      padding: 8px;
+      text-align: center;
+    }
+    th {
+      background-color: #f4f4f4;
+    }
+    input[type="text"], input[type="number"] {
+      padding: 5px;
+      margin: 5px;
+    }
+    button {
+      margin: 5px;
+      padding: 8px 12px;
+    }
+  </style>
+</head>
+<body>
+
+<h2>Student Entry Table (SET)</h2>
+
+<label>Name: <input type="text" id="name"></label>
+<label>Marks: <input type="number" id="marks"></label>
+<button onclick="addStudent()">Add Student</button>
+
+<br>
+<label>Search: <input type="text" id="searchInput" onkeyup="searchStudent()"></label>
+<button onclick="downloadCSV()">Download as CSV</button>
+<button onclick="window.print()">Print Report</button>
+
+<table id="studentTable">
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Marks</th>
+      <th>Grade</th>
+    </tr>
+  </thead>
+  <tbody>
+  </tbody>
+</table>
+
+<script>
+  function addStudent() {
+    const name = document.getElementById("name").value;
+    const marks = parseFloat(document.getElementById("marks").value);
+
+    if (!name || isNaN(marks)) {
+      alert("Please enter valid name and marks.");
+      return;
+    }
+
+    let grade = "";
+    if (marks >= 900) grade = "A";
+    else if (marks >= 800) grade = "B";
+    else if (marks >= 700) grade = "C";
+    else if (marks >= 600) grade = "D";
+    else if (marks >= 500) grade = "E";
+    else grade = "F";
+
+    const table = document.getElementById("studentTable").getElementsByTagName('tbody')[0];
+    const row = table.insertRow();
+    row.insertCell(0).textContent = name;
+    row.insertCell(1).textContent = marks;
+    row.insertCell(2).textContent = grade;
+
+    document.getElementById("name").value = "";
+    document.getElementById("marks").value = "";
+  }
+
+  function downloadCSV() {
+    let csv = [];
+    let rows = document.querySelectorAll("table tr");
+    for (let row of rows) {
+      let cols = row.querySelectorAll("td, th");
+      let rowData = [];
+      for (let col of cols) {
+        rowData.push(col.innerText);
+      }
+      csv.push(rowData.join(","));
+    }
+
+    let csvContent = csv.join("\n");
+    let blob = new Blob([csvContent], { type: "text/csv" });
+    let link = document.createElement("a");
+    link.href = URL.createObjectURL(blob);
+    link.download = "students_data.csv";
+    link.click();
+  }
+
+  function searchStudent() {
+    let input = document.getElementById("searchInput").value.toUpperCase();
+    let table = document.getElementById("studentTable");
+    let rows = table.getElementsByTagName("tr");
+
+    for (let i = 1; i < rows.length; i++) {
+      let nameCell = rows[i].getElementsByTagName("td")[0];
+      if (nameCell) {
+        let name = nameCell.textContent || nameCell.innerText;
+        rows[i].style.display = name.toUpperCase().indexOf(input) > -1 ? "" : "none";
+      }
+    }
+  }
+</script>
+
+</body>
+</html>
